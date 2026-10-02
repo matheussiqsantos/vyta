@@ -16,9 +16,9 @@
                 <exec.mainClass>${packageClassName}</exec.mainClass>
                 <exec.executable>java</exec.executable>
                 <Env.APP_ENVIRONMENT>postgres</Env.APP_ENVIRONMENT>
-                <Env.POSTGRES_URL> postgresql://db.hmsfxpwgqqjcfeeujghg.supabase.co:5432/postgres</Env.POSTGRES_URL>
-                <Env.POSTGRES_USER> postgres</Env.POSTGRES_USER>
-                <Env.POSTGRES_PASSWORD> qENhBBRM6BdTEPmm</Env.POSTGRES_PASSWORD>
+                <Env.POSTGRES_URL>postgresql://db.hmsfxpwgqqjcfeeujghg.supabase.co:5432/postgres</Env.POSTGRES_URL>
+                <Env.POSTGRES_USER>postgres</Env.POSTGRES_USER>
+                <Env.POSTGRES_PASSWORD>o1gOeR0ldihZZM3Q</Env.POSTGRES_PASSWORD>
             </properties>
         </action>
     </actions>

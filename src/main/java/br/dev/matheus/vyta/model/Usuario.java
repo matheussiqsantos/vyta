@@ -9,10 +9,12 @@ import java.time.LocalDate;
 
 @Entity
 @Table(name = "usuario")
+@Inheritance(strategy = InheritanceType.JOINED)
 public class Usuario {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "usuario_id")
     private Long usuarioId;
     
     @Enumerated(EnumType.STRING)

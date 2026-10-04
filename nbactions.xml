@@ -16,9 +16,9 @@
                 <exec.mainClass>${packageClassName}</exec.mainClass>
                 <exec.executable>java</exec.executable>
                 <Env.APP_ENVIRONMENT>postgres</Env.APP_ENVIRONMENT>
-                <Env.POSTGRES_URL>db.hmsfxpwgqqjcfeeujghg.supabase.co:5432/postgres?sslmode=require</Env.POSTGRES_URL>
+                <Env.POSTGRES_URL>localhost:5432/vyta</Env.POSTGRES_URL>
                 <Env.POSTGRES_USER>postgres</Env.POSTGRES_USER>
-                <Env.POSTGRES_PASSWORD>o1gOeR0ldihZZM3Q</Env.POSTGRES_PASSWORD>
+                <Env.POSTGRES_PASSWORD>vyta123</Env.POSTGRES_PASSWORD>
             </properties>
         </action>
     </actions>

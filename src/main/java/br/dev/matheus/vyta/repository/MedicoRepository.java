@@ -13,5 +13,5 @@ public interface MedicoRepository extends JpaRepository<Medico, Long> {
     
     boolean existsByCrmAndCrmUf(String crm, String crmUf);
     
-    List<Medico> findByEspecialidadeIgnoreCase(String especialidade);
+    List<Medico> findByEspecialidadeContainingIgnoreCase(String especialidade);
 }

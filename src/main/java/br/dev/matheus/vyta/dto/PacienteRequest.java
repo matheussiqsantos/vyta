@@ -1,13 +1,21 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package br.dev.matheus.vyta.dto;
 
-/**
- *
- * @author User
- */
-public class PacienteRequest {
-    
-}
+import br.dev.matheus.vyta.model.enums.SexoBiologico;
+import br.dev.matheus.vyta.model.enums.TipoSanguineo;
+import jakarta.validation.constraints.*;
+import java.time.LocalDate;
+
+public record PacienteRequest(
+        @NotBlank @Size(max = 150) String nome,
+        @NotBlank @Size(max = 15) String cpf,
+        @NotBlank @Email String email,
+        @Size(max = 15) String telefone,
+        @Past LocalDate dataNascimento,
+        SexoBiologico sexoBiologico,
+        String identidadeGenero,
+        String nomeContatoEmergencia,
+        @Size(max = 15) String telContatoEmergencia,
+        @NotBlank @Size(min = 8, message = "A senha deve ter no mínimo 8 caracteres") String senha,
+        Long enderecoId,
+        TipoSanguineo tipoSanguineo
+) {}

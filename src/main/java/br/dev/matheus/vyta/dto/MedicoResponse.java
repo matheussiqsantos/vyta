@@ -11,11 +11,13 @@ public record MedicoResponse(
         String crm,
         String crmUf,
         String especialidade,
-        StatusConta statusConta
+        StatusConta statusConta,
+        EnderecoResponse endereco
 ) {
     public static MedicoResponse de(Medico m) {
         return new MedicoResponse(
                 m.getUsuarioId(), m.getNome(), m.getEmail(), m.getTelefone(),
-                m.getCrm(), m.getCrmUf(), m.getEspecialidade(), m.getStatusConta());
+                m.getCrm(), m.getCrmUf(), m.getEspecialidade(), m.getStatusConta(),
+                m.getEndereco() == null ? null : EnderecoResponse.de(m.getEndereco()));
     }
 }

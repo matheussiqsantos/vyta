@@ -14,12 +14,14 @@ public record PacienteResponse(
         String telefone,
         LocalDate dataNascimento,
         TipoSanguineo tipoSanguineo,
-        StatusConta statusConta
+        StatusConta statusConta,
+        EnderecoResponse endereco
 ) {
     public static PacienteResponse de(Paciente p) {
         return new PacienteResponse(
                 p.getUsuarioId(), p.getNome(), p.getCpf(), p.getEmail(),
                 p.getTelefone(), p.getDataNascimento(),
-                p.getTipoSanguineo(), p.getStatusConta());
+                p.getTipoSanguineo(), p.getStatusConta(),
+                p.getEndereco() == null ? null : EnderecoResponse.de(p.getEndereco()));
     }
 }

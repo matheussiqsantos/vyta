@@ -4,10 +4,8 @@ import br.dev.matheus.vyta.dto.MedicoRequest;
 import br.dev.matheus.vyta.dto.MedicoResponse;
 import br.dev.matheus.vyta.exception.RecursoNaoEncontradoException;
 import br.dev.matheus.vyta.exception.RegraNegocioException;
-import br.dev.matheus.vyta.model.Endereco;
 import br.dev.matheus.vyta.model.Medico;
 import br.dev.matheus.vyta.model.enums.StatusConta;
-import br.dev.matheus.vyta.repository.EnderecoRepository;
 import br.dev.matheus.vyta.repository.MedicoRepository;
 import br.dev.matheus.vyta.repository.UsuarioRepository;
 import java.util.List;
@@ -20,16 +18,16 @@ public class MedicoService {
     
     private final MedicoRepository medicoRepository;
     private final UsuarioRepository usuarioRepository;
-    private final EnderecoRepository enderecoRepository;
+    private final EnderecoService enderecoService;
     private final PasswordEncoder passwordEncoder;
     
     public MedicoService(MedicoRepository medicoRepository,
                          UsuarioRepository usuarioRepository,
-                         EnderecoRepository enderecoRepository,
+                         EnderecoService enderecoService,
                          PasswordEncoder passwordEncoder) {
         this.medicoRepository = medicoRepository;
         this.usuarioRepository = usuarioRepository;
-        this.enderecoRepository = enderecoRepository;
+        this.enderecoService = enderecoService;
         this.passwordEncoder = passwordEncoder;
     }
     
@@ -63,12 +61,7 @@ public class MedicoService {
         m.setCrm(req.crm());
         m.setCrmUf(crmUf);
         m.setEspecialidade(req.especialidade());
-        
-        if (req.enderecoId() != null) {
-            Endereco endereco = enderecoRepository.findById(req.enderecoId())
-                    .orElseThrow(() -> new RecursoNaoEncontradoException("Endereço não encontrado"));
-            m.setEndereco(endereco);
-        }
+        m.setEndereco(enderecoService.resolver(req.enderecoId(), req.endereco()));
         
         return MedicoResponse.de(medicoRepository.save(m));
     }

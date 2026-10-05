@@ -4,12 +4,10 @@ import br.dev.matheus.vyta.dto.PacienteRequest;
 import br.dev.matheus.vyta.dto.PacienteResponse;
 import br.dev.matheus.vyta.exception.RecursoNaoEncontradoException;
 import br.dev.matheus.vyta.exception.RegraNegocioException;
-import br.dev.matheus.vyta.model.Endereco;
 import br.dev.matheus.vyta.model.Paciente;
 import br.dev.matheus.vyta.model.enums.StatusConta;
 import br.dev.matheus.vyta.repository.PacienteRepository;
 import br.dev.matheus.vyta.repository.UsuarioRepository;
-import br.dev.matheus.vyta.repository.EnderecoRepository;
 import java.util.List;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -20,16 +18,16 @@ public class PacienteService {
     
     private final PacienteRepository pacienteRepository;
     private final UsuarioRepository usuarioRepository;
-    private final EnderecoRepository enderecoRepository;
+    private final EnderecoService enderecoService;
     private final PasswordEncoder passwordEncoder;
     
     public PacienteService(PacienteRepository pacienteRepository,
                            UsuarioRepository usuarioRepository,
-                           EnderecoRepository enderecoRepository,
+                           EnderecoService enderecoService,
                            PasswordEncoder passwordEncoder) {
         this.pacienteRepository = pacienteRepository;
         this.usuarioRepository = usuarioRepository;
-        this.enderecoRepository = enderecoRepository;
+        this.enderecoService = enderecoService;
         this.passwordEncoder = passwordEncoder;
     }
     
@@ -58,11 +56,7 @@ public class PacienteService {
         p.setStatusConta(StatusConta.ATIVA);
         p.setTipoSanguineo(req.tipoSanguineo());
         
-        if (req.enderecoId() != null) {
-            Endereco endereco = enderecoRepository.findById(req.enderecoId())
-                    .orElseThrow(() -> new RecursoNaoEncontradoException("Endereço não encontrado"));
-            p.setEndereco(endereco);
-        }
+        p.setEndereco(enderecoService.resolver(req.enderecoId(), req.endereco()));
         
         return PacienteResponse.de(pacienteRepository.save(p));
         

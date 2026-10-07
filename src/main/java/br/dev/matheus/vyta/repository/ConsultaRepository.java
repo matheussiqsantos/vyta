@@ -7,7 +7,7 @@ import java.time.LocalTime;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface ConsultaRepository extends JpaRepository<ConsultaRepository, Long> {
+public interface ConsultaRepository extends JpaRepository<Consulta, Long> {
     List<Consulta> findByPacienteUsuarioIdOrderByDataConsultaAscHorarioAsc(Long pacienteId);
     List<Consulta> findByMedicoUsuarioIdOrderByDataConsultaAscHorarioAsc(Long medicoId);
     

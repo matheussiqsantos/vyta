@@ -1,13 +1,6 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Record.java to edit this template
- */
 package br.dev.matheus.vyta.dto;
 
-/**
- *
- * @author sesi3dia
- */
-public record AlterarStatusRequest() {
+import br.dev.matheus.vyta.model.enums.StatusConsulta;
+import jakarta.validation.constraints.NotNull;
 
-}
+public record AlterarStatusRequest(@NotNull StatusConsulta status) {}

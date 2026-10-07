@@ -41,8 +41,6 @@ public class Consulta {
     @Column(nullable = false)
     private StatusConsulta statusConsulta;
     
-    @Column(precision = 10, scale = 2)
-    private BigDecimal valor;
     
     @Column(length = 100)
     private String convenio;
@@ -117,14 +115,6 @@ public class Consulta {
 
     public void setStatusConsulta(StatusConsulta statusConsulta) {
         this.statusConsulta = statusConsulta;
-    }
-
-    public BigDecimal getValor() {
-        return valor;
-    }
-
-    public void setValor(BigDecimal valor) {
-        this.valor = valor;
     }
 
     public String getConvenio() {

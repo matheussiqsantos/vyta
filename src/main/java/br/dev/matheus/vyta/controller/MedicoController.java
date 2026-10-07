@@ -5,7 +5,6 @@ import br.dev.matheus.vyta.dto.MedicoResponse;
 import br.dev.matheus.vyta.service.MedicoService;
 import jakarta.validation.Valid;
 import java.util.List;
-import lombok.val;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.RestController;

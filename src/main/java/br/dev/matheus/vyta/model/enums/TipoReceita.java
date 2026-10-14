@@ -1,8 +1,9 @@
 package br.dev.matheus.vyta.model.enums;
 
 public enum TipoReceita {
-    SIMPLES,
-    CONTROLE_ESPECIAL,
+    BRANCA_SIMPLES,
+    BRANCA_CONTROLE_ESPECIAL,
+    BRANCA_ANTIMICROBIANOS,
     AZUL,
     AMARELA;
     

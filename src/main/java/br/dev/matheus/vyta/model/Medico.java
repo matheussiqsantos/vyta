@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 @Entity
 @Table(name = "medico",
@@ -19,6 +21,7 @@ public class Medico extends Usuario {
     private String crm;
     
     @NotBlank
+    @JdbcTypeCode(SqlTypes.CHAR)
     @Pattern(regexp = "[A-Z]{2}", message = "UF do CRM deve ter 2 letras maiúsculas")
     @Column(name = "crm_uf", nullable = false, length = 2, columnDefinition = "char(2)")
     private String crmUf;

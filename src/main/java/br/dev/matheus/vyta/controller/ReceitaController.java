@@ -33,4 +33,9 @@ public class ReceitaController {
     public ReceitaResponse buscar(@PathVariable Long id) {
         return service.buscarPorId(id);
     }
+    
+    @GetMapping("pacientes/{pacienteId}/receitas")
+    public List<ReceitaResponse> listarPorPaciente(@PathVariable Long pacienteId) {
+        return service.listarPorPaciente(pacienteId);
+    }
 }

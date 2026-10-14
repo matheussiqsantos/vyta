@@ -11,6 +11,7 @@ import br.dev.matheus.vyta.model.ReceitaItem;
 import br.dev.matheus.vyta.model.enums.StatusConsulta;
 import br.dev.matheus.vyta.model.enums.StatusReceita;
 import br.dev.matheus.vyta.repository.ConsultaRepository;
+import br.dev.matheus.vyta.repository.PacienteRepository;
 import br.dev.matheus.vyta.repository.ReceitaRepository;
 import java.time.LocalDate;
 import java.util.List;
@@ -22,11 +23,14 @@ public class ReceitaService {
 
     private final ReceitaRepository receitaRepository;
     private final ConsultaRepository consultaRepository;
+    private final PacienteRepository pacienteRepository;
 
     public ReceitaService(ReceitaRepository receitaRepository,
-                          ConsultaRepository consultaRepository) {
+            ConsultaRepository consultaRepository,
+            PacienteRepository pacienteRepository) {
         this.receitaRepository = receitaRepository;
         this.consultaRepository = consultaRepository;
+        this.pacienteRepository = pacienteRepository;
     }
 
     @Transactional
@@ -57,7 +61,7 @@ public class ReceitaService {
         receita.setDataEmissao(hoje);
         receita.setDataVencimento(req.dataVencimento());
         receita.setTipoReceita(req.tipoReceita());
-        receita.setStatusReceita(StatusReceita.ATIVA);
+        receita.setStatusReceita(StatusReceita.VALIDA);
         receita.setNumeroNotificacao(semNotificacao ? null : req.numeroNotificacao().trim());
 
         for (ReceitaItemRequest ir : req.itens()) {
@@ -80,10 +84,18 @@ public class ReceitaService {
 
     @Transactional(readOnly = true)
     public List<ReceitaResponse> listarPorConsulta(Long consultaId) {
-        if (!consultaRepository.existsById(consultaId)) {
-            throw new RecursoNaoEncontradoException("Consulta não encontrada.");
+        Consulta consulta = consultaRepository.findById(consultaId)
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Consulta não encontrada."));
+        return receitaRepository.findByConsultaOrderByDataEmissaoDesc(consulta)
+                .stream().map(ReceitaResponse::de).toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<ReceitaResponse> listarPorPaciente(Long pacienteId) {
+        if (!pacienteRepository.existsById(pacienteId)) {
+            throw new RecursoNaoEncontradoException("Paciente não encontrado.");
         }
-        return receitaRepository.findByConsultaIdOrderByDataEmissaoDesc(consultaId)
+        return receitaRepository.findByConsultaPacienteUsuarioIdOrderByDataEmissaoDesc(pacienteId)
                 .stream().map(ReceitaResponse::de).toList();
     }
 }

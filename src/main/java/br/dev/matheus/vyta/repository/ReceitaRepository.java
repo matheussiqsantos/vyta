@@ -1,10 +1,12 @@
 package br.dev.matheus.vyta.repository;
 
+import br.dev.matheus.vyta.model.Consulta;
 import br.dev.matheus.vyta.model.Receita;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 
 public interface ReceitaRepository extends JpaRepository<Receita, Long> {
-    List<Receita> findByConsultaIdOrderByDataEmissaoDesc(Long consultaId);
+    List<Receita> findByConsultaOrderByDataEmissaoDesc(Consulta consulta);
+    List<Receita> findByConsultaPacienteUsuarioIdOrderByDataEmissaoDesc(Long pacienteId);
 }

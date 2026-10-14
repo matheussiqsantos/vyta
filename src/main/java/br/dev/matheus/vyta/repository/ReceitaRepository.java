@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 
 public interface ReceitaRepository extends JpaRepository<Receita, Long> {
-    List<Receita> findByConsultaOrderByDataEmissaoDesc(Long consultaId);
+    List<Receita> findByConsultaIdOrderByDataEmissaoDesc(Long consultaId);
 }

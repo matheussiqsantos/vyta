@@ -1,0 +1,36 @@
+package br.dev.matheus.vyta.controller;
+
+import br.dev.matheus.vyta.dto.ReceitaRequest;
+import br.dev.matheus.vyta.dto.ReceitaResponse;
+import br.dev.matheus.vyta.service.ReceitaService;
+import jakarta.validation.Valid;
+import java.util.List;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+public class ReceitaController {
+
+    private final ReceitaService service;
+
+    public ReceitaController(ReceitaService service) {
+        this.service = service;
+    }
+
+    @PostMapping("/consultas/{consultaId}/receitas")
+    @ResponseStatus(HttpStatus.CREATED)
+    public ReceitaResponse emitir(@PathVariable Long consultaId,
+                                  @Valid @RequestBody ReceitaRequest req) {
+        return service.emitir(consultaId, req);
+    }
+
+    @GetMapping("/consultas/{consultaId}/receitas")
+    public List<ReceitaResponse> listarPorConsulta(@PathVariable Long consultaId) {
+        return service.listarPorConsulta(consultaId);
+    }
+
+    @GetMapping("/receitas/{id}")
+    public ReceitaResponse buscar(@PathVariable Long id) {
+        return service.buscarPorId(id);
+    }
+}

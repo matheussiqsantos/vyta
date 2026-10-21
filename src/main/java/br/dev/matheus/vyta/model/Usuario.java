@@ -6,57 +6,61 @@ import br.dev.matheus.vyta.model.enums.TipoUsuario;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 
-
 @Entity
 @Table(name = "usuario")
 @Inheritance(strategy = InheritanceType.JOINED)
 public class Usuario {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "usuario_id")
     private Long usuarioId;
-    
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private TipoUsuario tipoUsuario;
-    
+
     @Column(nullable = false)
     private String nome;
-    
+
     @Column(nullable = false, unique = true, length = 15)
     private String cpf;
-    
+
     @Column(nullable = false, unique = true)
     private String email;
-    
-    @Column(length = 15)
+
+    @Column(nullable = false, unique = true, length = 15)
     private String telefone;
-    
-    private LocalDate dataNascimento; 
-    
+
+    @Column(nullable = false)
+    private LocalDate dataNascimento;
+
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private SexoBiologico sexoBiologico;
-    
+
+    @Column(nullable = false)
     private String identidadeGenero;
+
+    @Column(nullable = false)
     private String nomeContatoEmergencia;
-    
-    @Column(length = 15)
+
+    @Column(nullable = false, length = 15)
     private String telContatoEmergencia;
-    
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private StatusConta statusConta;
-    
+
     @Column(nullable = false)
     private String senha;
-    
+
     @ManyToOne
     @JoinColumn(name = "endereco_id")
     private Endereco endereco;
-    
+
     public Usuario() {
-        
+
     }
 
     public Long getUsuarioId() {

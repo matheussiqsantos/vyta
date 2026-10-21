@@ -45,7 +45,6 @@ public class Consulta {
     @Column(length = 100)
     private String convenio;
     
-    // Local do atendimento: só preenchido em consultas presenciais
     @ManyToOne
     @JoinColumn(name = "endereco_id")
     private Endereco endereco;

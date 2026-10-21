@@ -18,7 +18,7 @@ public class ReceitaItem {
     @Column(name = "nome_medicamento", nullable = false)
     private String nomeMedicamento;
     
-    @Column(nullable = false)
+    @Column(name = "dosagem", nullable = false)
     private String dosagem;
     
     @Column(nullable = false)

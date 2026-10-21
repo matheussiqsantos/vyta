@@ -9,93 +9,153 @@ import br.dev.matheus.vyta.model.Consulta;
 import br.dev.matheus.vyta.model.Receita;
 import br.dev.matheus.vyta.model.ReceitaItem;
 import br.dev.matheus.vyta.model.enums.StatusConsulta;
+import br.dev.matheus.vyta.model.enums.StatusConta;
 import br.dev.matheus.vyta.model.enums.StatusReceita;
+import br.dev.matheus.vyta.model.enums.TipoReceita;
 import br.dev.matheus.vyta.repository.ConsultaRepository;
-import br.dev.matheus.vyta.repository.PacienteRepository;
 import br.dev.matheus.vyta.repository.ReceitaRepository;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.List;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class ReceitaService {
 
+    private static final ZoneId ZONA = ZoneId.of("America/Sao_Paulo");
+
     private final ReceitaRepository receitaRepository;
     private final ConsultaRepository consultaRepository;
-    private final PacienteRepository pacienteRepository;
 
     public ReceitaService(ReceitaRepository receitaRepository,
-            ConsultaRepository consultaRepository,
-            PacienteRepository pacienteRepository) {
+            ConsultaRepository consultaRepository) {
         this.receitaRepository = receitaRepository;
         this.consultaRepository = consultaRepository;
-        this.pacienteRepository = pacienteRepository;
     }
 
     @Transactional
-    public ReceitaResponse emitir(Long consultaId, ReceitaRequest req) {
-        Consulta consulta = consultaRepository.findById(consultaId)
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Consulta não encontrada."));
-
-        if (!consulta.getMedico().getUsuarioId().equals(req.medicoId())) {
-            throw new RegraNegocioException("Somente o médico da consulta pode emitir a receita.");
-        }
+    public ReceitaResponse criar(ReceitaRequest req) {
+        Consulta consulta = consultaRepository.findById(req.consultaId())
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Consulta não encontrada"));
 
         if (consulta.getStatusConsulta() != StatusConsulta.REALIZADA) {
-            throw new RegraNegocioException("A receita só pode ser emitida para consultas realizadas.");
+            throw new RegraNegocioException("A receita só pode ser emitida para consulta realizada");
+        }
+        if (consulta.getMedico().getStatusConta() != StatusConta.ATIVA) {
+            throw new RegraNegocioException("Médico com conta inativa não pode emitir receitas");
+        }
+        if (consulta.getPaciente().getStatusConta() != StatusConta.ATIVA) {
+            throw new RegraNegocioException("Paciente com conta inativa não pode receber receitas");
+        }
+        if (req.itens() == null || req.itens().isEmpty()) {
+            throw new RegraNegocioException("A receita precisa ter pelo menos um item");
         }
 
-        LocalDate hoje = LocalDate.now();
-        if (req.dataVencimento().isBefore(hoje)) {
-            throw new RegraNegocioException("A data de vencimento não pode estar no passado.");
+        TipoReceita tipo = req.tipoReceita();
+        String notificacao = req.numeroNotificacao() == null ? null : req.numeroNotificacao().trim();
+        if (notificacao != null && notificacao.isEmpty()) {
+            notificacao = null;
+        }
+        if (tipo.exigeNotificacao() && notificacao == null) {
+            throw new RegraNegocioException("Este tipo de receita exige o número da notificação");
+        }
+        if (!tipo.exigeNotificacao() && notificacao != null) {
+            throw new RegraNegocioException("Este tipo de receita não utiliza número de notificação");
         }
 
-        boolean semNotificacao = req.numeroNotificacao() == null || req.numeroNotificacao().isBlank();
-        if (req.tipoReceita().exigeNotificacao() && semNotificacao) {
-            throw new RegraNegocioException("Esse tipo de receita exige o número de notificação.");
-        }
+        LocalDate hoje = LocalDate.now(ZONA);
 
-        Receita receita = new Receita();
-        receita.setConsulta(consulta);
-        receita.setDataEmissao(hoje);
-        receita.setDataVencimento(req.dataVencimento());
-        receita.setTipoReceita(req.tipoReceita());
-        receita.setStatusReceita(StatusReceita.VALIDA);
-        receita.setNumeroNotificacao(semNotificacao ? null : req.numeroNotificacao().trim());
+        Receita r = new Receita();
+        r.setConsulta(consulta);
+        r.setTipoReceita(tipo);
+        r.setNumeroNotificacao(notificacao);
+        r.setDataEmissao(hoje);
+        r.setDataVencimento(hoje.plusDays(tipo.getDiasValidade()));
+        r.setStatusReceita(StatusReceita.VALIDA);
+        req.itens().forEach(i -> r.adicionarItem(montarItem(i)));
 
-        for (ReceitaItemRequest ir : req.itens()) {
-            ReceitaItem item = new ReceitaItem();
-            item.setNomeMedicamento(ir.nomeMedicamento().trim());
-            item.setDosagem(ir.dosagem().trim());
-            item.setQuantidade(ir.quantidade().trim());
-            item.setDuracaoTratamento(ir.duracaoTratamento().trim());
-            receita.adicionarItem(item);
-        }
-
-        return ReceitaResponse.de(receitaRepository.save(receita));
+        return ReceitaResponse.de(receitaRepository.save(r));
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
+    public ReceitaResponse adicionarItem(Long receitaId, ReceitaItemRequest req) {
+        Receita r = buscarEntidade(receitaId);
+        exigirValida(r);
+        r.adicionarItem(montarItem(req));
+        receitaRepository.saveAndFlush(r);
+        return ReceitaResponse.de(r);
+    }
+
+    @Transactional
+    public ReceitaResponse removerItem(Long receitaId, Long itemId) {
+        Receita r = buscarEntidade(receitaId);
+        exigirValida(r);
+        if (r.getItens().size() <= 1) {
+            throw new RegraNegocioException("Você não pode remover o último item da receita");
+        }
+        boolean removido = r.getItens().removeIf(i -> i.getId().equals(itemId));
+        if (!removido) {
+            throw new RecursoNaoEncontradoException("Item não encontrado nesta receita");
+        }
+        return ReceitaResponse.de(r);
+    }
+
+    @Transactional
     public ReceitaResponse buscarPorId(Long id) {
-        return ReceitaResponse.de(receitaRepository.findById(id)
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Receita não encontrada.")));
+        return ReceitaResponse.de(buscarEntidade(id));
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public List<ReceitaResponse> listarPorConsulta(Long consultaId) {
-        Consulta consulta = consultaRepository.findById(consultaId)
-                .orElseThrow(() -> new RecursoNaoEncontradoException("Consulta não encontrada."));
-        return receitaRepository.findByConsultaOrderByDataEmissaoDesc(consulta)
-                .stream().map(ReceitaResponse::de).toList();
+        return receitaRepository.findByConsultaConsultaIdOrderByDataEmissaoDesc(consultaId).stream()
+                .peek(this::sincronizarStatus)
+                .map(ReceitaResponse::de)
+                .toList();
     }
 
-    @Transactional(readOnly = true)
-    public List<ReceitaResponse> listarPorPaciente(Long pacienteId) {
-        if (!pacienteRepository.existsById(pacienteId)) {
-            throw new RecursoNaoEncontradoException("Paciente não encontrado.");
+    @Scheduled(cron = "0 5 0 * * *", zone = "America/Sao_Paulo")
+    @Transactional
+    public void vencerReceitas() {
+        receitaRepository.marcarVencidas(StatusReceita.VALIDA, StatusReceita.VENCIDA,
+                LocalDate.now(ZONA));
+    }
+
+    private Receita buscarEntidade(Long id) {
+        Receita r = receitaRepository.findById(id)
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Receita não encontrada"));
+        sincronizarStatus(r);
+        return r;
+    }
+
+    private void sincronizarStatus(Receita r) {
+        if (r.getStatusReceita() == StatusReceita.VALIDA
+                && r.getDataVencimento().isBefore(LocalDate.now(ZONA))) {
+            r.setStatusReceita(StatusReceita.VENCIDA);
         }
-        return receitaRepository.findByConsultaPacienteUsuarioIdOrderByDataEmissaoDesc(pacienteId)
-                .stream().map(ReceitaResponse::de).toList();
+    }
+
+    private void exigirValida(Receita r) {
+        if (r.getStatusReceita() != StatusReceita.VALIDA) {
+            throw new RegraNegocioException("Receita vencida não pode ser alterada");
+        }
+    }
+
+    private ReceitaItem montarItem(ReceitaItemRequest i) {
+        ReceitaItem item = new ReceitaItem();
+        item.setNomeMedicamento(i.nomeMedicamento().trim());
+        item.setDosagem(i.dosagem().trim());
+        item.setQuantidade(i.quantidade().trim());
+        item.setDuracaoTratamento(i.duracaoTratamento().trim());
+        return item;
+    }
+
+    @Transactional
+    public List<ReceitaResponse> listarPorPaciente(Long pacienteId) {
+        return receitaRepository.findByConsultaPacienteUsuarioIdOrderByDataEmissaoDesc(pacienteId).stream()
+                .peek(this::sincronizarStatus)
+                .map(ReceitaResponse::de)
+                .toList();
     }
 }

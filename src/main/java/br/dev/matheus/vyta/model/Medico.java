@@ -10,34 +10,37 @@ import org.hibernate.type.SqlTypes;
 
 @Entity
 @Table(name = "medico",
-       uniqueConstraints = @UniqueConstraint(columnNames = {"crm", "crm_uf"})
+        uniqueConstraints = @UniqueConstraint(columnNames = {"crm", "crm_uf"})
 )
 @PrimaryKeyJoinColumn(name = "usuario_id")
 public class Medico extends Usuario {
-    
+
     @NotBlank
     @Size(max = 15)
     @Column(name = "crm", nullable = false, length = 15)
     private String crm;
-    
+
     @NotBlank
     @JdbcTypeCode(SqlTypes.CHAR)
     @Pattern(regexp = "[A-Z]{2}", message = "UF do CRM deve ter 2 letras maiúsculas")
     @Column(name = "crm_uf", nullable = false, length = 2, columnDefinition = "char(2)")
     private String crmUf;
-    
+
+    @NotBlank
     @Size(max = 100)
-    @Column(name = "especialidade", length = 100)
+    @Column(name = "especialidade", nullable = false, length = 100)
     private String especialidade;
-    
+
     public Medico() {
         setTipoUsuario(TipoUsuario.MEDICO);
     }
-    
+
     @PrePersist
     @PreUpdate
     private void normalizar() {
-        if (crmUf != null) crmUf = crmUf.trim().toUpperCase();
+        if (crmUf != null) {
+            crmUf = crmUf.trim().toUpperCase();
+        }
     }
 
     public String getCrm() {
@@ -63,6 +66,5 @@ public class Medico extends Usuario {
     public void setEspecialidade(String especialidade) {
         this.especialidade = especialidade;
     }
-    
-    
+
 }

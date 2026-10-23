@@ -29,7 +29,7 @@ public class LaudoResultado {
     private String referencia;
 
     @Enumerated(EnumType.STRING)
-    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
+    //@JdbcTypeCode(SqlTypes.NAMED_ENUM)
     @Column(name = "status", nullable = false)
     private StatusResultado status;
 

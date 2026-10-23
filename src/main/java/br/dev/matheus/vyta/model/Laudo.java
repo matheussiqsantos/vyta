@@ -35,7 +35,7 @@ public class Laudo {
     private String titulo;
 
     @Enumerated(EnumType.STRING)
-    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
+    //@JdbcTypeCode(SqlTypes.NAMED_ENUM)
     @Column(name = "tipo", nullable = false)
     private TipoLaudo tipo;
 

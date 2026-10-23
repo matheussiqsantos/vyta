@@ -29,12 +29,12 @@ public class Receita {
     private LocalDate dataVencimento;
     
     @Enumerated(EnumType.STRING)
-    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
+    //@JdbcTypeCode(SqlTypes.NAMED_ENUM)
     @Column(name = "tipo_receita", nullable = false)
     private TipoReceita tipoReceita;
     
     @Enumerated(EnumType.STRING)
-    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
+    //@JdbcTypeCode(SqlTypes.NAMED_ENUM)
     @Column(name = "status_receita", nullable = false)
     private StatusReceita statusReceita;
     

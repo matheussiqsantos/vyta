@@ -48,6 +48,17 @@ public class Consulta {
     @ManyToOne
     @JoinColumn(name = "endereco_id")
     private Endereco endereco;
+    
+    @Column(name = "motivo", columnDefinition = "text")
+    private String motivo;
+
+    public String getMotivo() {
+        return motivo;
+    }
+
+    public void setMotivo(String motivo) {
+        this.motivo = motivo;
+    }
 
     public Consulta() {
     }

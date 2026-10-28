@@ -19,6 +19,7 @@ public record ConsultaResponse(
         ModalidadeConsulta modalidade,
         StatusConsulta statusConsulta,
         String convenio,
+        String motivo,
         EnderecoResponse endereco
 ) {
     public static ConsultaResponse de(Consulta c) {
@@ -29,7 +30,7 @@ public record ConsultaResponse(
                 c.getMedico().getEspecialidade(),
                 c.getDataConsulta(), c.getHorario(), c.getTipoConsulta(),
                 c.getModalidade(), c.getStatusConsulta(),
-                c.getConvenio(),
+                c.getConvenio(), c.getMotivo(),
                 c.getEndereco() == null ? null : EnderecoResponse.de(c.getEndereco()));
     }
 }

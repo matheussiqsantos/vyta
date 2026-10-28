@@ -84,6 +84,7 @@ public class ConsultaService {
         c.setTipoConsulta(req.tipoConsulta().trim());
         c.setModalidade(req.modalidade());
         c.setConvenio(req.convenio() == null || req.convenio().isBlank() ? null : req.convenio().trim());
+        c.setMotivo(req.motivo() == null || req.motivo().isBlank() ? null : req.motivo().trim());
         c.setStatusConsulta(StatusConsulta.AGENDADA);
         c.setEndereco(enderecoService.resolver(req.enderecoId(), req.endereco()));
 

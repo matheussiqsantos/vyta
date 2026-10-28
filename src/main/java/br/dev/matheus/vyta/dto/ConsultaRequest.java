@@ -14,6 +14,7 @@ public record ConsultaRequest(
     @NotBlank @Size(max = 100) String tipoConsulta,
     @NotNull ModalidadeConsulta modalidade,
     @Size(max = 100) String convenio,
+    @Size(max = 1000, message = "O motivo deve ter no máximo 1000 caracteres") String motivo,
     Long enderecoId,
     @Valid EnderecoRequest endereco
 ) {}

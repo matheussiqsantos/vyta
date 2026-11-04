@@ -5,6 +5,8 @@ import br.dev.matheus.vyta.model.enums.StatusConsulta;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 
 @Entity
@@ -33,10 +35,12 @@ public class Consulta {
     private String tipoConsulta;
     
     @Enumerated(EnumType.STRING)
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
     @Column(nullable = false)
     private ModalidadeConsulta modalidadeConsulta;
     
     @Enumerated(EnumType.STRING)
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
     @Column(nullable = false)
     private StatusConsulta statusConsulta;
     

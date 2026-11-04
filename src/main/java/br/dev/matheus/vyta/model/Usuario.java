@@ -5,6 +5,8 @@ import br.dev.matheus.vyta.model.enums.SexoBiologico;
 import br.dev.matheus.vyta.model.enums.TipoUsuario;
 import jakarta.persistence.*;
 import java.time.LocalDate;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 @Entity
 @Table(name = "usuario")
@@ -17,6 +19,7 @@ public class Usuario {
     private Long usuarioId;
 
     @Enumerated(EnumType.STRING)
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
     @Column(nullable = false)
     private TipoUsuario tipoUsuario;
 
@@ -36,6 +39,7 @@ public class Usuario {
     private LocalDate dataNascimento;
 
     @Enumerated(EnumType.STRING)
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
     @Column(nullable = false)
     private SexoBiologico sexoBiologico;
 

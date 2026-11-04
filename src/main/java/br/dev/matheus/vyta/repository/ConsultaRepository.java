@@ -1,6 +1,7 @@
 package br.dev.matheus.vyta.repository;
 
 import br.dev.matheus.vyta.model.Consulta;
+import br.dev.matheus.vyta.model.Paciente;
 import br.dev.matheus.vyta.model.enums.StatusConsulta;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -39,4 +40,8 @@ boolean medicoTemConsultaFutura(@Param("id") Long id,
 boolean pacienteTemConsultaFutura(@Param("id") Long id,
         @Param("status") Collection<StatusConsulta> status,
         @Param("hoje") LocalDate hoje, @Param("agora") LocalTime agora);
+
+@Query("select distinct c.paciente from Consulta c where c.medico.id = :medicoId")
+List<Paciente> findPacientesDoMedico(@Param("medicoId") Long medicoId);
+
 }

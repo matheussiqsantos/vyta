@@ -3,7 +3,6 @@ package br.dev.matheus.vyta.model;
 import br.dev.matheus.vyta.model.enums.ModalidadeConsulta;
 import br.dev.matheus.vyta.model.enums.StatusConsulta;
 import jakarta.persistence.*;
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -35,7 +34,7 @@ public class Consulta {
     
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private ModalidadeConsulta modalidade;
+    private ModalidadeConsulta modalidadeConsulta;
     
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -112,11 +111,11 @@ public class Consulta {
     }
 
     public ModalidadeConsulta getModalidade() {
-        return modalidade;
+        return modalidadeConsulta;
     }
 
     public void setModalidade(ModalidadeConsulta modalidade) {
-        this.modalidade = modalidade;
+        this.modalidadeConsulta = modalidade;
     }
 
     public StatusConsulta getStatusConsulta() {

@@ -1,9 +1,9 @@
 package br.dev.matheus.vyta.dto;
 
 import br.dev.matheus.vyta.model.Paciente;
+import br.dev.matheus.vyta.model.enums.SexoBiologico;
 import br.dev.matheus.vyta.model.enums.StatusConta;
 import br.dev.matheus.vyta.model.enums.TipoSanguineo;
-
 import java.time.LocalDate;
 
 public record PacienteResponse(
@@ -13,15 +13,21 @@ public record PacienteResponse(
         String email,
         String telefone,
         LocalDate dataNascimento,
-        TipoSanguineo tipoSanguineo,
+        SexoBiologico sexoBiologico,
+        String identidadeGenero,
+        String nomeContatoEmergencia,
+        String telContatoEmergencia,
         StatusConta statusConta,
-        EnderecoResponse endereco
-) {
+        Long enderecoId,
+        TipoSanguineo tipoSanguineo
+        ) {
+
     public static PacienteResponse de(Paciente p) {
         return new PacienteResponse(
-                p.getUsuarioId(), p.getNome(), p.getCpf(), p.getEmail(),
-                p.getTelefone(), p.getDataNascimento(),
-                p.getTipoSanguineo(), p.getStatusConta(),
-                p.getEndereco() == null ? null : EnderecoResponse.de(p.getEndereco()));
+                p.getUsuarioId(), p.getNome(), p.getCpf(), p.getEmail(), p.getTelefone(),
+                p.getDataNascimento(), p.getSexoBiologico(), p.getIdentidadeGenero(),
+                p.getNomeContatoEmergencia(), p.getTelContatoEmergencia(), p.getStatusConta(),
+                p.getEndereco() != null ? p.getEndereco().getEnderecoId() : null,
+                p.getTipoSanguineo());
     }
 }

@@ -5,14 +5,14 @@ import jakarta.persistence.Converter;
 
 @Converter(autoApply = true)
 public class TipoSanguineoConverter implements AttributeConverter<TipoSanguineo, String> {
-        
+
     @Override
-    public String convertToDatabaseColumn(TipoSanguineo tipo) {
-        return tipo == null ? null : tipo.getDescricao();
+    public String convertToDatabaseColumn(TipoSanguineo atributo) {
+        return atributo == null ? null : atributo.getSimbolo();
     }
-    
+
     @Override
-    public TipoSanguineo convertToEntityAttribute(String valor) {
-        return valor == null ? null : TipoSanguineo.fromDescricao(valor);
+    public TipoSanguineo convertToEntityAttribute(String coluna) {
+        return coluna == null ? null : TipoSanguineo.fromSimbolo(coluna);
     }
 }

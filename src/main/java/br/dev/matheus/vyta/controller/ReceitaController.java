@@ -8,6 +8,9 @@ import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import br.dev.matheus.vyta.security.UsuarioLogado;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.http.ResponseEntity;
 
 @RestController
 public class ReceitaController {
@@ -17,18 +20,18 @@ public class ReceitaController {
     public ReceitaController(ReceitaService service) {
         this.service = service;
     }
-
-    @PostMapping("{consultaId}/receitas")
-    @ResponseStatus(HttpStatus.CREATED)
-    public ReceitaResponse criar(@Valid @RequestBody ReceitaRequest req) {
-        return service.criar(req);
-    }
-
+    
     @PostMapping("/receitas/{id}/itens")
     @ResponseStatus(HttpStatus.CREATED)
     public ReceitaResponse adicionarItem(@PathVariable Long id,
             @Valid @RequestBody ReceitaItemRequest req) {
         return service.adicionarItem(id, req);
+    }
+
+    @PostMapping("/consultas/{consultaId}/receitas")   // se a classe já tiver @RequestMapping("/consultas"), use só "/{consultaId}/receitas"
+    public ResponseEntity<ReceitaResponse> criar(@PathVariable Long consultaId,
+            @Valid @RequestBody ReceitaRequest req, @AuthenticationPrincipal UsuarioLogado logado) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.criar(consultaId, req, logado.id()));
     }
 
     @GetMapping("/consultas/{consultaId}/receitas")

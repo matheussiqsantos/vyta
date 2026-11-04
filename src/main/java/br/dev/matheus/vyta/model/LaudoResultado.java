@@ -29,8 +29,8 @@ public class LaudoResultado {
     private String referencia;
 
     @Enumerated(EnumType.STRING)
-    //@JdbcTypeCode(SqlTypes.NAMED_ENUM)
-    @Column(name = "status", nullable = false)
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
+    @Column(name = "status_resultado", nullable = false)
     private StatusResultado status;
 
     public Long getId() {

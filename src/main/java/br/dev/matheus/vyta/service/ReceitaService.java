@@ -18,6 +18,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.List;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,11 +36,15 @@ public class ReceitaService {
         this.consultaRepository = consultaRepository;
     }
 
+   
     @Transactional
-    public ReceitaResponse criar(ReceitaRequest req) {
-        Consulta consulta = consultaRepository.findById(req.consultaId())
+    public ReceitaResponse criar(Long consultaId, ReceitaRequest req, Long medicoLogadoId) {
+        Consulta consulta = consultaRepository.findById(consultaId)
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Consulta não encontrada"));
 
+        if (!consulta.getMedico().getUsuarioId().equals(medicoLogadoId)) {
+            throw new AccessDeniedException("Acesso negado");
+        }
         if (consulta.getStatusConsulta() != StatusConsulta.REALIZADA) {
             throw new RegraNegocioException("A receita só pode ser emitida para consulta realizada");
         }
@@ -115,6 +120,14 @@ public class ReceitaService {
                 .toList();
     }
 
+    @Transactional
+    public List<ReceitaResponse> listarPorPaciente(Long pacienteId) {
+        return receitaRepository.findByConsultaPacienteUsuarioIdOrderByDataEmissaoDesc(pacienteId).stream()
+                .peek(this::sincronizarStatus)
+                .map(ReceitaResponse::de)
+                .toList();
+    }
+
     @Scheduled(cron = "0 5 0 * * *", zone = "America/Sao_Paulo")
     @Transactional
     public void vencerReceitas() {
@@ -149,13 +162,5 @@ public class ReceitaService {
         item.setQuantidade(i.quantidade().trim());
         item.setDuracaoTratamento(i.duracaoTratamento().trim());
         return item;
-    }
-
-    @Transactional
-    public List<ReceitaResponse> listarPorPaciente(Long pacienteId) {
-        return receitaRepository.findByConsultaPacienteUsuarioIdOrderByDataEmissaoDesc(pacienteId).stream()
-                .peek(this::sincronizarStatus)
-                .map(ReceitaResponse::de)
-                .toList();
     }
 }

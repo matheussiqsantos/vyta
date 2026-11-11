@@ -1,6 +1,8 @@
 package br.dev.matheus.vyta.exception;
 
 import java.util.HashMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -13,6 +15,8 @@ import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     @ExceptionHandler(RegraNegocioException.class)
     public ResponseEntity<Map<String, String>> regraNegocio(RegraNegocioException e) {
@@ -34,6 +38,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<Map<String, String>> integridade(DataIntegrityViolationException e) {
+        // Mostra no console do back o motivo real vindo do Postgres (a resposta ao app continua genérica).
+        log.warn("Violação de integridade no banco: {}", e.getMostSpecificCause().getMessage());
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(Map.of("erro", "Já existe um registro com esses dados ou há vínculos que impedem a operação"));
     }

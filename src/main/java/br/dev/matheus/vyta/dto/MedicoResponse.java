@@ -18,6 +18,7 @@ public record MedicoResponse(
         String telContatoEmergencia,
         StatusConta statusConta,
         Long enderecoId,
+        EnderecoResponse endereco,
         String crm,
         String crmUf,
         String especialidade
@@ -28,6 +29,7 @@ public record MedicoResponse(
                 m.getDataNascimento(), m.getSexoBiologico(), m.getIdentidadeGenero(),
                 m.getNomeContatoEmergencia(), m.getTelContatoEmergencia(), m.getStatusConta(),
                 m.getEndereco() != null ? m.getEndereco().getEnderecoId() : null,
+                m.getEndereco() != null ? EnderecoResponse.de(m.getEndereco()) : null,
                 m.getCrm(), m.getCrmUf(), m.getEspecialidade());
     }
 }

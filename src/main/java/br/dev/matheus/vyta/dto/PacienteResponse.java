@@ -19,6 +19,7 @@ public record PacienteResponse(
         String telContatoEmergencia,
         StatusConta statusConta,
         Long enderecoId,
+        EnderecoResponse endereco,
         TipoSanguineo tipoSanguineo
         ) {
 
@@ -28,6 +29,7 @@ public record PacienteResponse(
                 p.getDataNascimento(), p.getSexoBiologico(), p.getIdentidadeGenero(),
                 p.getNomeContatoEmergencia(), p.getTelContatoEmergencia(), p.getStatusConta(),
                 p.getEndereco() != null ? p.getEndereco().getEnderecoId() : null,
+                p.getEndereco() != null ? EnderecoResponse.de(p.getEndereco()) : null,
                 p.getTipoSanguineo());
     }
 }

@@ -53,6 +53,7 @@ public class Usuario {
     private String telContatoEmergencia;
 
     @Enumerated(EnumType.STRING)
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
     @Column(nullable = false)
     private StatusConta statusConta;
 

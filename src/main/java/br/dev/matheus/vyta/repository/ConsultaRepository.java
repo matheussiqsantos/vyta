@@ -41,6 +41,8 @@ boolean pacienteTemConsultaFutura(@Param("id") Long id,
         @Param("status") Collection<StatusConsulta> status,
         @Param("hoje") LocalDate hoje, @Param("agora") LocalTime agora);
 
+boolean existsByMedicoUsuarioIdAndPacienteUsuarioId(Long medicoId, Long pacienteId);
+
 @Query("select distinct c.paciente from Consulta c where c.medico.id = :medicoId")
 List<Paciente> findPacientesDoMedico(@Param("medicoId") Long medicoId);
 

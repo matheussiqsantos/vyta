@@ -13,7 +13,7 @@ public record ReceitaResponse(
     LocalDate dataVencimento,
     TipoReceita tipoReceita,
     StatusReceita statusReceita,
-    String numeroNotificaca,
+    String numeroNotificacao,
     List<ReceitaItemResponse> itens
 ) {
     public static ReceitaResponse de(Receita r) {

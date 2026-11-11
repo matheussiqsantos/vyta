@@ -10,14 +10,12 @@ public record MedicoResumoResponse(
         String crmUf,
         String especialidade,
         StatusConta statusConta,
-        Long enderecoId,
         EnderecoResponse endereco
 ) {
     public static MedicoResumoResponse de(Medico m) {
         return new MedicoResumoResponse(
                 m.getUsuarioId(), m.getNome(), m.getCrm(), m.getCrmUf(), m.getEspecialidade(),
                 m.getStatusConta(),
-                m.getEndereco() != null ? m.getEndereco().getEnderecoId() : null,
-                m.getEndereco() != null ? EnderecoResponse.de(m.getEndereco()) : null);
+                m.getEndereco() == null ? null : EnderecoResponse.de(m.getEndereco()));
     }
 }

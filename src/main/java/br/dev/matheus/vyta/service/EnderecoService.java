@@ -80,6 +80,7 @@ public class EnderecoService {
     @Transactional
     public Endereco criarEntidade(EnderecoRequest req) {
         Endereco e = new Endereco();
+        preencher(e, req);
         return enderecoRepository.save(e);
     }
 }
